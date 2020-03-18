@@ -35,5 +35,4 @@ build/*
 build_release/*
 build-release/*
 *.DS_Store
-libigl/
-shared/
+
