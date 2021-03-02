@@ -1,16 +1,6 @@
 # Computer Graphics – Meshes
 
-> **To get started:** Clone this repository and all its [submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) dependencies using:
-> 
->     git clone --recursive https://github.com/dilevin/computer-graphics-meshes.git
->
-> **Do not fork:** Clicking "Fork" will create a _public_ repository. If you'd like to use GitHub while you work on your assignment, then mirror this repo as a new _private_ repository: https://stackoverflow.com/questions/10065526/github-how-to-make-a-fork-of-public-repository-private
-
 ## Background
-
-### Read Section 12.1 of _Fundamentals of Computer Graphics (4th Edition)_.
-
-### Skim read Chapter 11 of _Fundamentals of Computer Graphics (4th Edition)_.
 
 There are many ways to store a triangle (or polygonal) mesh on the computer. The
 data-structures have very different complexities in terms of code, memory, and
@@ -29,8 +19,6 @@ Thus, the geometry is stored as a list of $n$ 3D vectors: efficiently, we can
 put these vectors in the rows of a real-valued matrix $\V ∈ \R^{n×3}$. Likewise,
 the connectivity is stored as a list of $m$ triplets: efficiently, we can put
 these triplets in the rows of an integer-valued matrix $\F ∈ [0,n-1]^{m×3}$.
-
-> **Question:** What if we want to store a (pure-)quad mesh?
 
 ### Texture Mapping
 
@@ -75,40 +63,6 @@ interpolating](https://en.wikipedia.org/wiki/Linear_interpolation) normals
 stored at the corners of each triangle leads to a [smooth
 appearance](https://en.wikipedia.org/wiki/Phong_shading#Phong_interpolation).
 
-This raises the question: what normals should we put at vertices or corners of
-our mesh? 
-
-For a faceted surface (e.g., a cube), all corners of a planar face $f$ should
-share the face's normal $\n_f ∈ \R³$ .
-
-For a smooth surface (e.g., a sphere), corners of triangles located at the same
-vertex should share the same normal vector. This way the rendering is continuous
-across the vertex. A common way to define per-vertex normals is to take a
-weighted average of normals from incident faces. Different weighting schemes are
-possible: uniform average (easy, but sensitive to irregular triangulations),
-angle-weighted (geometrically well motivated, but not robust near zero-area
-triangles), area-weighted (geometrically reasonable, well behaved). In this
-assignment, we'll compute area-weighted per-vertex normals:
-
-$$\n_v = \frac{∑\limits_{f∈N(v)} a_f \n_f}{\left\|∑\limits_{f∈N(v)} a_f \n_f\right\|},$$
-where $N(v)$ is the set of faces neighboring the $v$-th vertex.
-
-[per-vertex-normal]: images/per-vertex-normal.png height=300px
-![Unique triangle normals (orange) are well-defined. We can define a notion of a
-normal for each vertex (purple) by taking a (weighted) average of normals from
-incident triangles.][per-vertex-normal]
-
-For surfaces with a mixture of smooth-looking parts and creases, it is useful to
-define normals independently for each triangle corner (as opposed to each mesh
-vertex). For each corner, we'll again compute an area-weighted average of normals 
-triangles incident on the shared vertex at this corner, but we'll ignore
-triangle's whose normal is too different from the corner's face's normal:
-
-$$\n_{f,c} = 
-\frac{∑\limits_{g∈N(v)\,|\,\n_g⋅\n_f<ε } a_g \n_g}{\left\|\left\|∑\limits_{g∈N(v)\,|\,\n_g⋅\n_f<ε } a_g \n_g\right\|\right\|},
-$$
-where $ε$ is the maximum dot product between two face normals before we declare
-there is a crease between them.
 
 ![`./normals` should open a viewing window. Toggling `1`,`2`,`3` should switch
 between normal types. Notice that per-face has sharp corners, but a faceted
@@ -192,43 +146,10 @@ defined for inputs meshes with arbitrary polygonal faces (triangles, quads,
 pentagons, etc.) but always produces a pure-quad mesh as output (i.e., all faces
 have 4 sides).
 
-To keep things simple, in this assignment we'll assume the input is also a
-pure-quad mesh.
-
 ![Running `./quad_subdivision` and repeated pressing _space_ will show this
 [Bob](http://www.cs.cmu.edu/~kmcrane/Projects/ModelRepository/#bob) converging
 toward a smooth surface.](images/bob-subdivision.gif)
 
-## Mesh Viewers
-
-[Mesh Lab](http://www.meshlab.net) is a free mesh-viewer used widely in computer
-graphics and computer vision research. **_Warning_:** Mesh Lab does not appear
-to respect user-provided normals in .obj files.
-
-[Autodesk Maya](https://en.wikipedia.org/wiki/Autodesk_Maya) is a commericial 3D
-modeling and animation software. They often have [free student
-versions](https://www.autodesk.com/education/free-software/maya).
-
-## Tasks
-
-### White list
-
-You're encouraged to use `#include <Eigen/Geometry>` to compute the [cross
-product](https://en.wikipedia.org/wiki/Cross_product) of two 3D vectors
-`.cross`.
-
-### Black list
-
-This assignment uses [libigl](http://libigl.github.io) for mesh viewing. libigl
-has many mesh processing functions implemented in C++, including some of the
-functions assigned here. Do not copy or look at the following implementations:
-
-`igl::per_vertex_normals`  
-`igl::per_face_normals`  
-`igl::per_corner_normals`  
-`igl::double_area`  
-`igl::vertex_triangle_adjacency`  
-`igl::writeOBJ`  
 
 ### `src/write_obj.cpp`
 
@@ -243,9 +164,6 @@ and faces `NF` to a `.obj` file.
 
 Construct the quad mesh of a cube including parameterization and per-face
 normals.
-
-> **Hint:** Draw out on paper and _label_ with indices the 3D cube, the 2D
-> parameterized cube, and the normals.
 
 ### `src/sphere.cpp`
 
